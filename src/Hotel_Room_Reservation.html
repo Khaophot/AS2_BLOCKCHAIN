@@ -7,6 +7,7 @@
     <!-- <script src="./node_modules/web3/dist/web3.min.js">
     </script> -->
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 </head>
 
 <body>
@@ -21,7 +22,7 @@
             <img src="image/e1.jpg" alt="Evergreen Forest Room" width="250px" height="250px"><br>
             <input id="document1" value="Evergreen Forest Room" type="hidden">
             <label class="col-lg-2 control-label"> </label>
-            <button class="button button1" id="btnRegistration1">Reserve</button>
+            <button class="button button1" id="btnReserve1">Reserve</button>
             <label class="col-lg-2 control-label">0.0001 Ether</label>
         </div>
 
@@ -31,7 +32,7 @@
             <img src="image/e2.jpg" alt="Deciduous Forest Room" width="250px" height="250px"><br>
             <input id="document2" value="Deciduous Forest Room" type="hidden">
             <label class="col-lg-2 control-label"> </label>
-            <button class="button button1" id="btnRegistration2">Reserve</button>
+            <button class="button button1" id="btnReserve2">Reserve</button>
             <label class="col-lg-2 control-label">0.0002 Ether</label>
         </div>
 
@@ -39,9 +40,9 @@
             <label class="col-lg-2 control-label"> </label>
             <label class="col-lg-2 control-label">Tropical Rain Forest Room</label>
             <img src="image/e3.jpg" alt="Tropical Rain Forest Room" width="250px" height="250px"><br>
-            <input id="document3" value="benza" type="hidden">
+            <input id="document3" value="Tropical Rain Forest Room" type="hidden">
             <label class="col-lg-2 control-label"> </label>
-            <button class="button button1" id="btnRegistration3">Reserve</button>
+            <button class="button button1" id="btnReserve3">Reserve</button>
             <label class="col-lg-2 control-label">0.0003 Ether</label>
         </div>
 
@@ -51,7 +52,7 @@
             <img src="image/e4.jpg" alt="Dry Evergreen Forest Room" width="250px" height="250px"><br>
             <input id="document4" value="Dry Evergreen Forest Room" type="hidden">
             <label class="col-lg-2 control-label"> </label>
-            <button class="button button1" id="btnRegistration4">Reserve</button>
+            <button class="button button1" id="btnReserve4">Reserve</button>
             <label class="col-lg-2 control-label">0.0004 Ether</label>
         </div>
 
@@ -61,7 +62,7 @@
             <img src="image/e5.jpg" alt="Coniferous Forest Room" width="250px" height="250px"><br>
             <input id="document5" value="Coniferous Forest Room" type="hidden">
             <label class="col-lg-2 control-label"> </label>
-            <button class="button button1" id="btnRegistration5">Reserve</button>
+            <button class="button button1" id="btnReserve5">Reserve</button>
             <label class="col-lg-2 control-label">0.0005 Ether</label>
         </div>
 
@@ -71,17 +72,36 @@
             <img src="image/e6.jpg" alt="Grassland Forest Room" width="250px" height="250px"><br>
             <input id="document6" value="Grassland Forest Room" type="hidden">
             <label class="col-lg-2 control-label"> </label>
-            <button class="button button1" id="btnRegistration6">Reserve</button>
+            <button class="button button1" id="btnReserve6">Reserve</button>
             <label class="col-lg-2 control-label">0.0006 Ether</label>
         </div>
 
-        <label class="col-lg-2 control-label"> </label>
-        <label class="col-lg-2 control-label">Status</label>
-        <h2 id="result"></h2>
-        Status: <span id="status">Loading...</span>
-        <label class="col-lg-2 control-label"> </label>
+        <div class="status">
+            <label class="col-lg-2 control-label">Status</label>
+            <h2 id="result"></h2>
+            Status: <span id="status">Loading...</span>
+        </div>
 
-        
+        <div class="row">
+            <table id="t01" class="type1">
+                <tr>
+                    <th>Time</th>
+                    <th>Room</th>
+                    <th>Owner (address)</th>
+                </tr>
+                <tbody id="rows">
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+
+
+            </table>
+        </div>
+
+
     </div>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js">
     </script>
@@ -142,6 +162,12 @@
                         "internalType": "bytes32",
                         "name": "hash",
                         "type": "bytes32"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "string",
+                        "name": "time",
+                        "type": "string"
                     }
                 ],
                 "name": "NameAdded",
@@ -169,7 +195,7 @@
                         "type": "string"
                     }
                 ],
-                "name": "RegistrationError",
+                "name": "ReserveError",
                 "type": "event"
             },
             {
@@ -197,9 +223,14 @@
                         "internalType": "string",
                         "name": "name",
                         "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "time",
+                        "type": "string"
                     }
                 ],
-                "name": "registration",
+                "name": "reserve",
                 "outputs": [],
                 "stateMutability": "payable",
                 "type": "function"
@@ -207,7 +238,7 @@
         ];
 
         async function loadContract() {
-            return await new window.web3.eth.Contract(abi, '0xA6da8d6e4631b695b852C14cbB0E3F777ade82A4');
+            return await new window.web3.eth.Contract(abi, '0x6C654CB03448ebbD3767D8db009E4673c1AA4F87');
         }
 
         async function load() {
@@ -222,19 +253,39 @@
             console.log(status);
         }
 
-        $("#btnRegistration1").click(function () {
+        function setTime() {
+            var t = new Date();
+            return t.getHours().toLocaleString() + ":" + t.getMinutes().toLocaleString();
+        }
+
+        async function addData(time, room, address) {
+            var newRow = document.createElement("tr");
+            var newCell1 = document.createElement("td");
+            var newCell2 = document.createElement("td");
+            var newCell3 = document.createElement("td");
+            newCell1.innerHTML = time;
+            newCell2.innerHTML = room;
+            newCell3.innerHTML = address;
+            newRow.append(newCell1);
+            newRow.append(newCell2);
+            newRow.append(newCell3);
+            document.getElementById("rows").appendChild(newRow);
+        }
+
+        $("#btnReserve1").click(function () {
             console.log(currentAccount);
-            window.contract.methods.registration($("#document1").val())
+            window.contract.methods.reserve($("#document1").val(), setTime())
                 .send({ from: currentAccount, value: 100000000000000 }, function (error, result) {
                     $("#result").html(result);
                 });
             window.contract.once('NameAdded', {}, function (error, event) {
                 if (!error) {
                     console.log(event);
-                    $('#result').html("Name: " + event.returnValues.text + "<br/>=> Hashed as: " + event.returnValues.hash);
+                    $('#result').html("Room: " + event.returnValues.text + "<br/>=> Address: " + event.returnValues.from);
+                    addData(event.returnValues.time, event.returnValues.text, event.returnValues.from);
                 }
             });
-            window.contract.once('RegistrationError', {}, function (error, event) {
+            window.contract.once('ReserveError', {}, function (error, event) {
                 if (!error) {
                     console.log(event);
                     $('#result').html("Error: " + event.returnValues.text + "<br/>Reason: " + event.returnValues.reason);
@@ -242,19 +293,20 @@
             });
         });
 
-        $("#btnRegistration2").click(function () {
+        $("#btnReserve2").click(function () {
             console.log(currentAccount);
-            window.contract.methods.registration($("#document2").val())
+            window.contract.methods.reserve($("#document2").val(), setTime())
                 .send({ from: currentAccount, value: 200000000000000 }, function (error, result) {
                     $("#result").html(result);
                 });
             window.contract.once('NameAdded', {}, function (error, event) {
                 if (!error) {
                     console.log(event);
-                    $('#result').html("Name: " + event.returnValues.text + "<br/>=> Hashed as: " + event.returnValues.hash);
+                    $('#result').html("Room: " + event.returnValues.text + "<br/>=> Address: " + event.returnValues.from);
+                    addData(event.returnValues.time, event.returnValues.text, event.returnValues.from);
                 }
             });
-            window.contract.once('RegistrationError', {}, function (error, event) {
+            window.contract.once('ReserveError', {}, function (error, event) {
                 if (!error) {
                     console.log(event);
                     $('#result').html("Error: " + event.returnValues.text + "<br/>Reason: " + event.returnValues.reason);
@@ -262,19 +314,20 @@
             });
         });
 
-        $("#btnRegistration3").click(function () {
+        $("#btnReserve3").click(function () {
             console.log(currentAccount);
-            window.contract.methods.registration($("#document3").val())
+            window.contract.methods.reserve($("#document3").val(), setTime())
                 .send({ from: currentAccount, value: 300000000000000 }, function (error, result) {
                     $("#result").html(result);
                 });
             window.contract.once('NameAdded', {}, function (error, event) {
                 if (!error) {
                     console.log(event);
-                    $('#result').html("Name: " + event.returnValues.text + "<br/>=> Hashed as: " + event.returnValues.hash);
+                    $('#result').html("Room: " + event.returnValues.text + "<br/>=> Address: " + event.returnValues.from);
+                    addData(event.returnValues.time, event.returnValues.text, event.returnValues.from);
                 }
             });
-            window.contract.once('RegistrationError', {}, function (error, event) {
+            window.contract.once('ReserveError', {}, function (error, event) {
                 if (!error) {
                     console.log(event);
                     $('#result').html("Error: " + event.returnValues.text + "<br/>Reason: " + event.returnValues.reason);
@@ -282,19 +335,20 @@
             });
         });
 
-        $("#btnRegistration4").click(function () {
+        $("#btnReserve4").click(function () {
             console.log(currentAccount);
-            window.contract.methods.registration($("#document4").val())
+            window.contract.methods.reserve($("#document4").val(), setTime())
                 .send({ from: currentAccount, value: 400000000000000 }, function (error, result) {
                     $("#result").html(result);
                 });
             window.contract.once('NameAdded', {}, function (error, event) {
                 if (!error) {
                     console.log(event);
-                    $('#result').html("Name: " + event.returnValues.text + "<br/>=> Hashed as: " + event.returnValues.hash);
+                    $('#result').html("Room: " + event.returnValues.text + "<br/>=> Address: " + event.returnValues.from);
+                    addData(event.returnValues.time, event.returnValues.text, event.returnValues.from);
                 }
             });
-            window.contract.once('RegistrationError', {}, function (error, event) {
+            window.contract.once('ReserveError', {}, function (error, event) {
                 if (!error) {
                     console.log(event);
                     $('#result').html("Error: " + event.returnValues.text + "<br/>Reason: " + event.returnValues.reason);
@@ -302,19 +356,20 @@
             });
         });
 
-        $("#btnRegistration5").click(function () {
+        $("#btnReserve5").click(function () {
             console.log(currentAccount);
-            window.contract.methods.registration($("#document5").val())
+            window.contract.methods.reserve($("#document5").val(), setTime())
                 .send({ from: currentAccount, value: 500000000000000 }, function (error, result) {
                     $("#result").html(result);
                 });
             window.contract.once('NameAdded', {}, function (error, event) {
                 if (!error) {
                     console.log(event);
-                    $('#result').html("Name: " + event.returnValues.text + "<br/>=> Hashed as: " + event.returnValues.hash);
+                    $('#result').html("Room: " + event.returnValues.text + "<br/>=> Address: " + event.returnValues.from);
+                    addData(event.returnValues.time, event.returnValues.text, event.returnValues.from);
                 }
             });
-            window.contract.once('RegistrationError', {}, function (error, event) {
+            window.contract.once('ReserveError', {}, function (error, event) {
                 if (!error) {
                     console.log(event);
                     $('#result').html("Error: " + event.returnValues.text + "<br/>Reason: " + event.returnValues.reason);
@@ -322,19 +377,20 @@
             });
         });
 
-        $("#btnRegistration6").click(function () {
+        $("#btnReserve6").click(function () {
             console.log(currentAccount);
-            window.contract.methods.registration($("#document6").val())
+            window.contract.methods.reserve($("#document6").val(), setTime())
                 .send({ from: currentAccount, value: 600000000000000 }, function (error, result) {
                     $("#result").html(result);
                 });
             window.contract.once('NameAdded', {}, function (error, event) {
                 if (!error) {
                     console.log(event);
-                    $('#result').html("Name: " + event.returnValues.text + "<br/>=> Hashed as: " + event.returnValues.hash);
+                    $('#result').html("Room: " + event.returnValues.text + "<br/>=> Address: " + event.returnValues.from);
+                    addData(event.returnValues.time, event.returnValues.text, event.returnValues.from);
                 }
             });
-            window.contract.once('RegistrationError', {}, function (error, event) {
+            window.contract.once('ReserveError', {}, function (error, event) {
                 if (!error) {
                     console.log(event);
                     $('#result').html("Error: " + event.returnValues.text + "<br/>Reason: " + event.returnValues.reason);

@@ -1,39 +1,38 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
-contract ProofOfStudent {  
+contract ForestRoom {  
 
-  mapping (bytes32 => bool) private listStudent;
+  mapping (bytes32 => bool) private listRoom;
 
   //---events---
   event NameAdded(
     address from,   
     string text,
-    bytes32 hash
+    bytes32 hash,
+    string time
   );
   
-  event RegistrationError(
+  event ReserveError(
     address from,
     string text,
     string reason
   );
 
-  // store the proof for a student in the contract state
+  // store the proof for a room in the contract state
   function recordProof(bytes32 proof) private {
-    listStudent[proof] = true;
+    listRoom[proof] = true;
   }
   
-  // record a student name
-  function registration(string memory name) public payable {
-    
+  // record a room name
+  function reserve(string memory name, string memory time) public payable {
+
     //---check if string was previously stored---
-    if (listStudent[hashing(name)]) {
+    if (listRoom[hashing(name)]) {
         //---fire the event---
-        emit RegistrationError(msg.sender , name, 
-              "This Student was added preciously");
+        emit ReserveError(msg.sender , name, "This Room was reserved");
         //---refund back to the sender---
         payable(msg.sender).transfer(msg.value);
-
         //---exit the function---
         return;
     }
@@ -42,9 +41,9 @@ contract ProofOfStudent {
     
     //---fire the event---
     emit NameAdded(msg.sender, name, 
-        hashing(name));
+        hashing(name), time);
     
-  }
+}
   
   // SHA256 for Integrity
   function hashing(string memory name) private 
@@ -52,9 +51,9 @@ contract ProofOfStudent {
     return sha256(bytes(name));
   }
   
-  // check name of student in this class
+  // check name of room in this class
   function checkName(string memory name) public 
   view returns (bool) {
-    return listStudent[hashing(name)];
+    return listRoom[hashing(name)];
   }
 }

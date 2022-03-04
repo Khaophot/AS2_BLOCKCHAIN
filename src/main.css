@@ -59,12 +59,34 @@ button {
     padding: 15px;
 
 } 
-.box2 {
-    width: 50%;
+.status {
+    width: 90%;
     float: left;
     padding: 15px;
-    border: 1px solid green;
 }
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+  }
+  table#t01 {
+      width :100%;
+  }
+  table#t01 tr:nth-child(even) {
+      background-color: rgb(189, 183, 183);
+  }
+  table#t01 tr:nth-child(odd) {
+     background-color:#fff;
+  }
+  table#t01 th {
+      background-color: #3e5ea3;
+      color: white;
+  }
 #result {
     padding:1em;
     background-color:#fff;
