@@ -29,23 +29,11 @@ contract ProofOfStudent {
     //---check if string was previously stored---
     if (listStudent[hashing(name)]) {
         //---fire the event---
-        emit RegistrationError(msg.sender, name, "This Student was added previously");
-
+        emit RegistrationError(msg.sender , name, 
+              "This Student was added preciously");
         //---refund back to the sender---
         payable(msg.sender).transfer(msg.value);
-        
-        //---exit the function---
-        return;
-    }
 
-    //---check if msg.value != 0.001 ether---
-    if (msg.value != 0.001 ether) {
-        //---fire the event---
-        emit RegistrationError(msg.sender, name, "Incorrect amount of Ether. 0.001 ether for registration");
-        
-        //---refund back to the sender---
-        payable(msg.sender).transfer(msg.value);
-        
         //---exit the function---
         return;
     }
@@ -53,7 +41,8 @@ contract ProofOfStudent {
     recordProof(hashing(name));
     
     //---fire the event---
-    emit NameAdded(msg.sender, name, hashing(name));
+    emit NameAdded(msg.sender, name, 
+        hashing(name));
     
   }
   
