@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Student Name in Blockchain Class</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <!-- <script src="./node_modules/web3/dist/web3.min.js">
+    </script> -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Name in Blockchain Class</h1>
+        <label class="col-lg-2 control-label">Name Registration</label>
+        <image src="https://www.lalinproperty.com/wp-content/uploads/2019/05/Lalin-%E0%B8%A5%E0%B8%A5%E0%B8%B4%E0%B8%A5-Lalin-Town-Lanceo-CRIB-%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%99%E0%B9%80%E0%B8%94%E0%B8%B5%E0%B9%88%E0%B8%A2%E0%B8%A7-%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%9D%E0%B8%94-%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%99%E0%B8%A7%E0%B8%84%E0%B8%B4%E0%B8%94%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88-%E0%B8%A5%E0%B8%B2%E0%B8%94%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%B1%E0%B8%87-%E0%B8%AA%E0%B8%B8%E0%B8%A7%E0%B8%A3%E0%B8%A3%E0%B8%93%E0%B8%A0%E0%B8%B9%E0%B8%A1%E0%B8%B4-%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%99-Cape-1new-640x450.jpg"></image>
+        <input id="document1" value="Blue">
+        <label for="document1">Blue</label>
+        <button id="btnRegistration">Registration</button>
+                
+        <label class="col-lg-2 control-label">
+        Check Student Name</label>
+        <input id="document2" type="text">
+        <button id="btnCheck">Check</button> 
+               
+        <label class="col-lg-2 control-label">Status</label>
+        <h2 id="result"></h2>
+        Status: <span id="status">Loading...</span>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js">
+    </script>
+    <script>
+        
+        async function loadWeb3() {
+            if (window.ethereum) {
+                window.web3 = new Web3(window.ethereum);
+                window.ethereum.enable();
+            }
+        }
+
+        let currentAccount = null;
+        window.ethereum
+            .request({ method: 'eth_accounts' })
+            .then(handleAccountsChanged)
+            .catch((err) => {
+            // Some unexpected error.
+            // For backwards compatibility reasons, if no accounts are available,
+            // eth_accounts will return an empty array.
+            console.error(err);
+            });
+
+        // Note that this event is emitted on page load.
+        // If the array of accounts is non-empty, you're already
+        // connected.
+        window.ethereum.on('accountsChanged', handleAccountsChanged);
+
+        // For now, 'eth_accounts' will continue to always return an array
+        function handleAccountsChanged(accounts) {
+            if (accounts.length === 0) {
+                // MetaMask is locked or the user has not connected any accounts
+                console.log('Please connect to MetaMask.');
+            } else if (accounts[0] !== currentAccount) {
+                currentAccount = accounts[0];
+                // Do any other work!
+            }
+        }
+
+        let abi = [
+                {   
+                    "anonymous": false,
+                    "inputs": [
+                        {
+                            "indexed": false,
+                            "internalType": "address",
+                            "name": "from",
+                            "type": "address"
+                        },
+                        {
+                            "indexed": false,
+                            "internalType": "string",
+                            "name": "text",
+                            "type": "string"
+                        },
+                        {
+                            "indexed": false,
+                            "internalType": "bytes32",
+                            "name": "hash",
+                            "type": "bytes32"
+                        }
+                    ],
+                    "name": "NameAdded",
+                    "type": "event"
+                    /* "outputs": [
+                        {
+                            "internalType": "bool",
+                            "name": "",
+                            "type": "bool"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function" */
+                },
+                {   
+                    "anonymous": false,
+                    "inputs": [
+                        {
+                            "indexed": false,
+                            "internalType": "address",
+                            "name": "from",
+                            "type": "address"
+                        },
+                        {
+                            "indexed": false,
+                            "internalType": "string",
+                            "name": "text",
+                            "type": "string"
+                        },
+                        {
+                            "indexed": false,
+                            "internalType": "string",
+                            "name": "reason",
+                            "type": "string"
+                        }
+                    ],
+                    "name": "RegistrationError",
+                    "type": "event"
+                    /* "outputs": [
+                        {
+                            "internalType": "bool",
+                            "name": "",
+                            "type": "bool"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function" */
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "string",
+                            "name": "name",
+                            "type": "string"
+                        }
+                    ],
+                    "name": "CheckName",
+                    "outputs": [
+                        {
+                            "internalType": "bool",
+                            "name": "",
+                            "type": "bool"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "string",
+                            "name": "name",
+                            "type": "string"
+                        }
+                    ],
+                    "name": "registration",
+                    "outputs": [],
+                    "stateMutability": "payable",
+                    "type": "function"
+                }
+            ];
+
+        async function loadContract() {
+            return await new window.web3.eth.Contract(abi, '0x9E69E95DaC12B2321b4774A671dF160615a63d82');
+        }
+
+        async function load() {
+            await loadWeb3();
+            window.contract = await loadContract();
+            updateStatus('Ready!');
+        }
+        
+        function updateStatus(status) {
+            const statusEl = document.getElementById('status');
+            statusEl.innerHTML = status;
+            console.log(status);
+        }
+
+        $("#btnRegistration").click(function() {
+            console.log(currentAccount);
+            window.contract.methods.registration($("#document1").val())
+                .send({from: currentAccount, value: 1000000000000000}, function(error, result) {
+                $("#result").html(result);
+            });
+            window.contract.once('NameAdded', {}, function(error, event){
+                if (!error){
+                    console.log(event);
+                    $("#result").html("Name: " + event.returnValues.text + "<br/>=> Hashed as: " + event.returnValues.hash);    
+                }
+            });
+            window.contract.once('RegistrationError', {}, function(error, event){
+                if (!error){
+                    console.log(event);
+                    $("#result").html("Error: " + event.returnValues.text + "<br/>Reason: " + event.returnValues.reason);    
+                }
+            });
+        });
+
+        $("#btnCheck").click(function() {
+            window.contract.methods.checkName($("#document2").val()).call(function(error, result){
+                if(!error) {
+                    $("#result").html(result.toString());
+                } else
+                    console.error(error);
+            });     
+        });
+
+        load();
+    </script>
+</body>
+</html>
