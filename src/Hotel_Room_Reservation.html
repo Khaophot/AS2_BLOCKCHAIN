@@ -238,7 +238,7 @@
         ];
 
         async function loadContract() {
-            return await new window.web3.eth.Contract(abi, '0x6C654CB03448ebbD3767D8db009E4673c1AA4F87');
+            return await new window.web3.eth.Contract(abi, '0x4Fa54EbFaD4457D84DFF49354a0D9EA292F23dd4');
         }
 
         async function load() {
@@ -254,8 +254,9 @@
         }
 
         function setTime() {
-            var t = new Date();
-            return t.getHours().toLocaleString() + ":" + t.getMinutes().toLocaleString();
+            var t = new Date().toLocaleTimeString("en-US")
+            console.log(t)
+            return t;
         }
 
         async function addData(time, room, address) {
